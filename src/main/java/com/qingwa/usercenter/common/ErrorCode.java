@@ -8,7 +8,7 @@ package com.qingwa.usercenter.common;
 public enum ErrorCode {
 
     SUCCESS(0,"ok",""),
-    PARAMS_ERROR(40000,"请求参数错误",""),
+    PARAMS_ERROR(40000,"请求参数错误error",""),
     NULL_ERROR(40001,"请求数据为空",""),
     NOT_LOGIN(40100,"用户未登录",""),
     NO_AUTH(40101,"无用户权限",""),
