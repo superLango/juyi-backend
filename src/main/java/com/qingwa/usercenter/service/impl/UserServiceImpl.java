@@ -35,7 +35,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
      */
     private static final String salt = "kjfcsddkjfdsajfdiusf8743urf";
 
-
+    /**
+     * 用户注册
+     * @param userAccount   用户账户
+     * @param userPassword  用户密码
+     * @param checkPassword 校验密码
+     * @param planetCode 星球编号
+     * @return
+     */
     @Override
     public long userRegister(String userAccount, String userPassword, String checkPassword,String planetCode) {
         // 1. 校验
@@ -90,6 +97,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         return user.getId();
     }
 
+    /**
+     * 用户登录
+     * @param userAccount  用户账户
+     * @param userPassword 用户密码
+     * @param request
+     * @return
+     */
     @Override
     public User userLogin(String userAccount, String userPassword, HttpServletRequest request) {
         // 1. 校验
