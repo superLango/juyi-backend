@@ -1,10 +1,10 @@
-package com.qingwa.usercenter.exception;
+package com.lango.usercenter.exception;
 
-import com.qingwa.usercenter.common.ErrorCode;
+import com.lango.usercenter.common.ErrorCode;
 
 /**
  * 自定义异常类
- * @author qingwa
+ * @author lango
  * @version 1.0
  */
 public class BusinessException extends RuntimeException{

@@ -3,9 +3,9 @@ spring:
     name: user-center-backend
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/qingwa
-    username: root
-    password: 245680
+    url: jdbc:mysql://localhost:3306/usercenter?useSSL=false
+    username: ****
+    password: ******
     # session 失效时间
   session:
     timeout: 86400
@@ -14,6 +14,7 @@ server:
   port: 8080
   servlet:
     context-path: /api
+  address: 0.0.0.0
 mybatis-plus:
   configuration:
     map-underscore-to-camel-case: false

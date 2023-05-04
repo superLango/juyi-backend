@@ -1,4 +1,4 @@
-package com.qingwa.usercenter;
+package com.lango.usercenter;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 

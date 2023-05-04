@@ -1,11 +1,11 @@
-package com.qingwa.usercenter.model.domain.request;
+package com.lango.usercenter.model.domain.request;
 
 import lombok.Data;
 
 import java.io.Serializable;
 
 /**
- * @author qingwa
+ * @author lango
  * @version 1.0
  * 用户注册请求体
  */

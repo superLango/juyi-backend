@@ -1,8 +1,8 @@
-package com.qingwa.usercenter.contant;
+package com.lango.usercenter.contant;
 
 /**
  * 用户常量
- * @author qingwa
+ * @author lango
  * @version 1.0
  */
 public interface UserConstant {

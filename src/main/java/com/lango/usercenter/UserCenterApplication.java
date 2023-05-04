@@ -1,11 +1,11 @@
-package com.qingwa.usercenter;
+package com.lango.usercenter;
 
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-@MapperScan("com.qingwa.usercenter.mapper")
+@MapperScan("com.lango.usercenter.mapper")
 public class UserCenterApplication {
 
     public static void main(String[] args) {

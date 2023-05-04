@@ -1,16 +1,14 @@
-package com.qingwa.usercenter.service;
+package com.lango.usercenter.service;
 
-import com.qingwa.usercenter.model.domain.User;
+import com.lango.usercenter.model.domain.User;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.annotation.Resource;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 /**
- * @author qingwa
+ * @author lango
  * @version 1.0
  * 用户服务测试
  */
@@ -36,7 +34,7 @@ class UserServiceTest {
     }
     @Test
     void userRegister(){
-        String userAccount = "qingwa";
+        String userAccount = "lango";
         String userPassword = "";
         String checkPassword = "245680";
         String planetCOde = "1";
@@ -45,11 +43,11 @@ class UserServiceTest {
         userAccount = "wa";
         result = userService.userRegister(userAccount, userPassword, checkPassword,planetCOde);
         Assertions.assertEquals(-1,result);
-        userAccount = "qingwa";
+        userAccount = "lango";
         userPassword = "123456";
         result = userService.userRegister(userAccount, userPassword, checkPassword,planetCOde);
         Assertions.assertEquals(-1,result);
-        userAccount = "test qingwa";
+        userAccount = "test lango";
         userPassword = "12345678";
         result = userService.userRegister(userAccount, userPassword, checkPassword,planetCOde);
         Assertions.assertEquals(-1,result);
@@ -60,7 +58,7 @@ class UserServiceTest {
         checkPassword = "12345678";
         result = userService.userRegister(userAccount, userPassword, checkPassword,planetCOde);
         Assertions.assertEquals(-1,result);
-        userAccount = "qingwa";
+        userAccount = "lango";
         result = userService.userRegister(userAccount, userPassword, checkPassword,planetCOde);
         Assertions.assertEquals(-1,result);
 

@@ -1,6 +1,6 @@
-package com.qingwa.usercenter.service;
+package com.lango.usercenter.service;
 
-import com.qingwa.usercenter.model.domain.User;
+import com.lango.usercenter.model.domain.User;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * 用户服务
  *
- * @author qingwa
+ * @author lango
  */
 public interface UserService extends IService<User> {
 

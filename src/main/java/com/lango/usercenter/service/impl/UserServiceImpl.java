@@ -1,12 +1,12 @@
-package com.qingwa.usercenter.service.impl;
+package com.lango.usercenter.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.qingwa.usercenter.common.ErrorCode;
-import com.qingwa.usercenter.exception.BusinessException;
-import com.qingwa.usercenter.model.domain.User;
-import com.qingwa.usercenter.service.UserService;
-import com.qingwa.usercenter.mapper.UserMapper;
+import com.lango.usercenter.common.ErrorCode;
+import com.lango.usercenter.exception.BusinessException;
+import com.lango.usercenter.model.domain.User;
+import com.lango.usercenter.service.UserService;
+import com.lango.usercenter.mapper.UserMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -17,12 +17,12 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.qingwa.usercenter.contant.UserConstant.USER_LOGIN_STATE;
+import static com.lango.usercenter.contant.UserConstant.USER_LOGIN_STATE;
 
 /**
  * 用户服务实现类
  *
- * @author qingwa
+ * @author lango
  */
 @Service
 @Slf4j

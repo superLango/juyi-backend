@@ -1,14 +1,14 @@
-package com.qingwa.usercenter.exception;
+package com.lango.usercenter.exception;
 
-import com.qingwa.usercenter.common.BaseResponse;
-import com.qingwa.usercenter.common.ErrorCode;
-import com.qingwa.usercenter.common.ResultUtils;
+import com.lango.usercenter.common.BaseResponse;
+import com.lango.usercenter.common.ErrorCode;
+import com.lango.usercenter.common.ResultUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 /**
- * @author qingwa
+ * @author lango
  * @version 1.0
  * 全局异常处理器
  */

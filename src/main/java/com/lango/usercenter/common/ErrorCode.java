@@ -1,7 +1,7 @@
-package com.qingwa.usercenter.common;
+package com.lango.usercenter.common;
 
 /**
- * @author qingwa
+ * @author lango
  * @version 1.0
  * 全局错误码
  */

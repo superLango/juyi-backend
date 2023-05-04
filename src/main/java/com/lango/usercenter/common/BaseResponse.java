@@ -1,4 +1,4 @@
-package com.qingwa.usercenter.common;
+package com.lango.usercenter.common;
 
 import lombok.Data;
 
@@ -7,7 +7,7 @@ import java.io.Serializable;
 /**
  * 通用返回类
  * @param <T>
- * @author qingwa
+ * @author lango
  * @version 1.0
  */
 @Data
