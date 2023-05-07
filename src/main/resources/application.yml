@@ -1,4 +1,6 @@
 spring:
+  profiles:
+    active: dev
   application:
     name: user-center-backend
   datasource:
@@ -9,6 +11,9 @@ spring:
     # session 失效时间
   session:
     timeout: 86400
+  mvc:
+    path match:
+      matching-strategy: ant_path_matcher
 #DataSource Config
 server:
   port: 8080
