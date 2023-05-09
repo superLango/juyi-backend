@@ -3,7 +3,6 @@ package com.lango.usercenter.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.gson.Gson;
-import com.google.gson.TypeAdapter;
 import com.google.gson.reflect.TypeToken;
 import com.lango.usercenter.common.ErrorCode;
 import com.lango.usercenter.exception.BusinessException;
@@ -26,6 +25,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static com.lango.usercenter.contant.UserConstant.ADMIN_ROLE;
 import static com.lango.usercenter.contant.UserConstant.USER_LOGIN_STATE;
 
 /**
@@ -46,26 +46,27 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
     /**
      * 用户注册
+     *
      * @param userAccount   用户账户
      * @param userPassword  用户密码
      * @param checkPassword 校验密码
-     * @param planetCode 星球编号
+     * @param planetCode    星球编号
      * @return
      */
     @Override
-    public long userRegister(String userAccount, String userPassword, String checkPassword,String planetCode) {
+    public long userRegister(String userAccount, String userPassword, String checkPassword, String planetCode) {
         // 1. 校验
-        if (StringUtils.isAnyBlank(userAccount, userPassword, checkPassword,planetCode)) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR,"参数为空");
+        if (StringUtils.isAnyBlank(userAccount, userPassword, checkPassword, planetCode)) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "参数为空");
         }
         if (userAccount.length() < 4) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR,"用户账号过短");
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户账号过短");
         }
         if (userPassword.length() < 8 || checkPassword.length() < 8) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR,"用户密码过短");
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户密码过短");
         }
-        if (planetCode.length() > 5){
-            throw new BusinessException(ErrorCode.PARAMS_ERROR,"星球编号过长");
+        if (planetCode.length() > 5) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "星球编号过长");
         }
         // 账户不能包含特殊字符
         String validPatten = "[`~!@#$%^&*()+=|{}':;',\\\\[\\\\].<>/?~！@#￥%……&*（）——+|{}【】‘；：”“’。，、？]";
@@ -100,7 +101,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         user.setUserPassword(encodedPassword);
         user.setPlanetCode(planetCode);
         boolean saveResult = this.save(user);
-        if (!saveResult){
+        if (!saveResult) {
             return -1;
         }
         return user.getId();
@@ -108,6 +109,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
     /**
      * 用户登录
+     *
      * @param userAccount  用户账户
      * @param userPassword 用户密码
      * @param request
@@ -139,25 +141,26 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         queryWrapper.eq("userPassword", encodedPassword);
         User user = userMapper.selectOne(queryWrapper);
         // 用户不存在
-        if (user == null){
+        if (user == null) {
             log.info("user login failed, userAccount cannot match userPassword");
             return null;
         }
         // 4. 用户脱敏
         User safetyUser = getSafetyUser(user);
         // 3. 记录用户的登录态
-        request.getSession().setAttribute(USER_LOGIN_STATE,safetyUser);
+        request.getSession().setAttribute(USER_LOGIN_STATE, safetyUser);
         return safetyUser;
     }
 
     /**
      * 用户脱敏
+     *
      * @param originUser
      * @return
      */
     @Override
-    public User getSafetyUser(User originUser){
-        if (originUser == null){
+    public User getSafetyUser(User originUser) {
+        if (originUser == null) {
             return null;
         }
         User safetyUser = new User();
@@ -195,9 +198,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
      * @return
      */
     @Override
-    public List<User> searchUsersByTags(List<String> tagNameList){
+    public List<User> searchUsersByTags(List<String> tagNameList) {
         // 判断是否为空
-        if (CollectionUtils.isEmpty(tagNameList)){
+        if (CollectionUtils.isEmpty(tagNameList)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
 
@@ -207,22 +210,88 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         List<User> userList = userMapper.selectList(queryWrapper);
         Gson gson = new Gson();
         // 2. 在内存中判断是否包含要求的标签
-        return userList.stream().filter((user) -> {
+        return userList.stream().filter(user -> {
             String tagsStr = user.getTags();
-            if (StringUtils.isBlank(tagsStr)){
-                return false;
-            }
             // 使用 gson 反序列化 将 json 转换为 java 对象
-            Set<String> tempTagNameSet = gson.fromJson(tagsStr,new TypeToken<Set<String>>(){}.getType());
+            Set<String> tempTagNameSet = gson.fromJson(tagsStr, new TypeToken<Set<String>>() {
+            }.getType());
             // java 8 新特性 降低代码复杂度 消除没有意义的分支 代替 if 判断是否为空
             tempTagNameSet = Optional.ofNullable(tempTagNameSet).orElse(new HashSet<>());
-            for (String tagName : tempTagNameSet) {
-                if (!tempTagNameSet.contains(tagName)){
+            for (String tagName : tagNameList) {
+                if (!tempTagNameSet.contains(tagName)) {
                     return false;
                 }
             }
             return true;
         }).map(this::getSafetyUser).collect(Collectors.toList());
+    }
+
+    /**
+     * 校验权限
+     *
+     * @param user
+     * @return
+     */
+    @Override
+    public int updateUser(User user, User loginUser) {
+        Long userId = user.getId();
+        if (userId == null || userId <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        // todo 补充校验，如果用户没有传任何要更新的值，就直接报错，不用执行更新语句
+        // 如果是管理员，允许更新任意用户
+        // 如果不是管理员，只允许更新当前（自己的）信息
+        if (!isAdmin(loginUser) && userId != loginUser.getId()){
+            throw new BusinessException(ErrorCode.NO_AUTH);
+        }
+        User oldUser = userMapper.selectById(userId);
+        if (oldUser == null){
+            throw new BusinessException(ErrorCode.NULL_ERROR);
+        }
+        return userMapper.updateById(user);
+    }
+
+    /**
+     * 获取当前登录用户信息
+     *
+     * @param request
+     * @return
+     */
+    @Override
+    public User getLoginUser(HttpServletRequest request) {
+        if (request == null) {
+            return null;
+        }
+        Object userObj = request.getSession().getAttribute(USER_LOGIN_STATE);
+        if (userObj == null) {
+            throw new BusinessException(ErrorCode.NO_AUTH);
+        }
+        return (User) userObj;
+    }
+
+    /**
+     * 是否为管理员
+     *
+     * @param request
+     * @return
+     */
+    @Override
+    public boolean isAdmin(HttpServletRequest request) {
+        // 鉴权 仅管理员可查询
+        Object userObj = request.getSession().getAttribute(USER_LOGIN_STATE);
+        User user = (User) userObj;
+        return user != null && user.getUserRole() == ADMIN_ROLE;
+    }
+
+    /**
+     * 是否为管理员
+     *
+     * @param loginUser
+     * @return
+     */
+    @Override
+    public boolean isAdmin(User loginUser) {
+        return loginUser != null && loginUser.getUserRole() == ADMIN_ROLE;
     }
 
     /**
@@ -232,9 +301,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
      * @return
      */
     @Deprecated
-    private List<User> searchUsersByTagsBySQL(List<String> tagNameList){
+    private List<User> searchUsersByTagsBySQL(List<String> tagNameList) {
         // 判断是否为空
-        if (CollectionUtils.isEmpty(tagNameList)){
+        if (CollectionUtils.isEmpty(tagNameList)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
 
@@ -244,7 +313,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         // 拼接 and 查询
         // like '%Java%' and like '%Python%'
         for (String tagName : tagNameList) {
-            queryWrapper = queryWrapper.like("tags",tagName);
+            queryWrapper = queryWrapper.like("tags", tagName);
         }
         List<User> userList = userMapper.selectList(queryWrapper);
         return userList.stream().map(this::getSafetyUser).collect(Collectors.toList());
