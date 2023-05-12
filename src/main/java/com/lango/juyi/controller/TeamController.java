@@ -7,7 +7,9 @@ import com.lango.juyi.common.ErrorCode;
 import com.lango.juyi.common.ResultUtils;
 import com.lango.juyi.exception.BusinessException;
 import com.lango.juyi.model.domain.Team;
+import com.lango.juyi.model.domain.User;
 import com.lango.juyi.model.dto.TeamQuery;
+import com.lango.juyi.model.request.TeamAddRequest;
 import com.lango.juyi.service.TeamService;
 import com.lango.juyi.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +18,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -36,21 +39,22 @@ public class TeamController {
     private TeamService teamService;
 
     /**
-     * 增
+     * 创建队伍
      *
-     * @param team
+     * @param teamAddRequest
+     * @param request
      * @return
      */
     @PostMapping("/add")
-    public BaseResponse<Long> addTeam(@RequestBody Team team) {
-        if (team == null) {
+    public BaseResponse<Long> addTeam(@RequestBody TeamAddRequest teamAddRequest, HttpServletRequest request) {
+        if (teamAddRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        boolean save = teamService.save(team);
-        if (!save) {
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "插入失败");
-        }
-        return ResultUtils.success(team.getId());
+        User loginUser = userService.getLoginUser(request);
+        Team team = new Team();
+        BeanUtils.copyProperties(teamAddRequest,team);
+        long teamId = teamService.addTeam(team, loginUser);
+        return ResultUtils.success(teamId);
     }
 
     /**
@@ -127,6 +131,7 @@ public class TeamController {
 
     /**
      * 分页查询
+     *
      * @param teamQuery
      * @return
      */
@@ -136,7 +141,7 @@ public class TeamController {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         Team team = new Team();
-        BeanUtils.copyProperties(team, teamQuery);
+        BeanUtils.copyProperties(teamQuery,team);
         Page<Team> page = new Page<>(teamQuery.getPageNum(), teamQuery.getPageSize());
         QueryWrapper<Team> queryWrapper = new QueryWrapper<>(team);
         Page<Team> resultPage = teamService.page(page, queryWrapper);
