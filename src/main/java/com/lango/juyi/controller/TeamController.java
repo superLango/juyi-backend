@@ -78,7 +78,7 @@ public class TeamController {
      * @return
      */
     @PostMapping("/update")
-    public BaseResponse<Boolean> deleteTeam(@RequestBody Team team) {
+    public BaseResponse<Boolean> updateTeam(@RequestBody Team team) {
         if (team == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
