@@ -3,6 +3,12 @@ package com.lango.juyi.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.lango.juyi.model.domain.Team;
 import com.lango.juyi.model.domain.User;
+import com.lango.juyi.model.dto.TeamQuery;
+import com.lango.juyi.model.request.TeamJoinRequest;
+import com.lango.juyi.model.request.TeamUpdateRequest;
+import com.lango.juyi.model.vo.TeamUserVO;
+
+import java.util.List;
 
 /**
 * @author 26449
@@ -19,4 +25,31 @@ public interface TeamService extends IService<Team> {
      * @return
      */
     long addTeam(Team team, User loginUser);
+
+    /**
+     * 搜索队伍
+     *
+     * @param teamQuery
+     * @param isAdmin
+     * @return
+     */
+    List<TeamUserVO> listTeams(TeamQuery teamQuery,boolean isAdmin);
+
+    /**
+     * 更新队伍
+     *
+     * @param teamUpdateRequest
+     * @param loginUser
+     * @return
+     */
+    boolean updateTeam(TeamUpdateRequest teamUpdateRequest,User loginUser);
+
+    /**
+     * 加入队伍
+     *
+     * @param teamJoinRequest
+     * @param loginUser
+     * @return
+     */
+    boolean joinTeam(TeamJoinRequest teamJoinRequest,User loginUser);
 }

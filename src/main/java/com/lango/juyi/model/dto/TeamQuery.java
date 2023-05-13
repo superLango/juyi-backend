@@ -1,6 +1,7 @@
 package com.lango.juyi.model.dto;
 
 import com.lango.juyi.common.PageRequest;
+import com.lango.juyi.model.domain.User;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -13,10 +14,18 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class TeamQuery extends PageRequest {
+
+    private static final long serialVersionUID = -8840728769598670015L;
+
     /**
      * id
      */
     private Long id;
+
+    /**
+     * 搜索关键词(同时对队伍名称和描述搜索)
+     */
+    private String searchText;
 
     /**
      * 队伍名称
