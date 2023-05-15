@@ -2,6 +2,7 @@ package com.lango.juyi.model.domain;
 
 import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -36,7 +37,9 @@ public class Team implements Serializable {
 
     /**
      * 过期时间
+     * 格式化后端接口
      */
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
     private Date expireTime;
 
     /**

@@ -5,6 +5,7 @@ import com.lango.juyi.model.domain.Team;
 import com.lango.juyi.model.domain.User;
 import com.lango.juyi.model.dto.TeamQuery;
 import com.lango.juyi.model.request.TeamJoinRequest;
+import com.lango.juyi.model.request.TeamQuitRequest;
 import com.lango.juyi.model.request.TeamUpdateRequest;
 import com.lango.juyi.model.vo.TeamUserVO;
 
@@ -52,4 +53,21 @@ public interface TeamService extends IService<Team> {
      * @return
      */
     boolean joinTeam(TeamJoinRequest teamJoinRequest,User loginUser);
+
+    /**
+     * 退出队伍
+     *
+     * @param teamQuitRequest
+     * @param loginUser
+     * @return
+     */
+    boolean quitTeam(TeamQuitRequest teamQuitRequest, User loginUser);
+
+    /**
+     * 删除（解散）队伍
+     *
+     * @param id
+     * @return
+     */
+    boolean deleteTeam(long id,User loginUser);
 }
