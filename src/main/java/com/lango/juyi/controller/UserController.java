@@ -9,6 +9,7 @@ import com.lango.juyi.exception.BusinessException;
 import com.lango.juyi.model.domain.User;
 import com.lango.juyi.model.request.UserLoginRequest;
 import com.lango.juyi.model.request.UserRegisterRequest;
+import com.lango.juyi.model.vo.UserVO;
 import com.lango.juyi.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -214,4 +215,18 @@ public class UserController {
         return ResultUtils.success(b);
     }
 
+    /**
+     * 获取最匹配的用户
+     * @param num
+     * @param request
+     * @return
+     */
+    @GetMapping("/match")
+    public BaseResponse<List<User>> matchUsers(long num, HttpServletRequest request) {
+        if (num <= 0 || num > 20){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        User loginUser = userService.getLoginUser(request);
+        return ResultUtils.success(userService.matchUsers(num,loginUser));
+    }
 }

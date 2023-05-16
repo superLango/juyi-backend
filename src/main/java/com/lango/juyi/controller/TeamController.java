@@ -3,6 +3,7 @@ package com.lango.juyi.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.lango.juyi.common.BaseResponse;
+import com.lango.juyi.common.DeleteRequest;
 import com.lango.juyi.common.ErrorCode;
 import com.lango.juyi.common.ResultUtils;
 import com.lango.juyi.exception.BusinessException;
@@ -28,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -120,6 +122,22 @@ public class TeamController {
         }
         boolean isAdmin = userService.isAdmin(request);
         List<TeamUserVO> teamList = teamService.listTeams(teamQuery, isAdmin);
+        // 判断当前用户是否已加入队伍
+        List<Long> teamIdList = teamList.stream().map(TeamUserVO::getId).collect(Collectors.toList());
+        QueryWrapper<UserTeam> userTeamQueryWrapper = new QueryWrapper<>();
+
+        try {
+            User loginUser = userService.getLoginUser(request);
+            userTeamQueryWrapper.eq("userId", loginUser.getId());
+            userTeamQueryWrapper.in("teamId",teamIdList);
+            List<UserTeam> userTeamList = userTeamService.list(userTeamQueryWrapper);
+            // 已加入的队伍 Id 集合
+            Set<Long> hasJoinTeamIdSet = userTeamList.stream().map(UserTeam::getTeamId).collect(Collectors.toSet());
+            teamList.forEach(team -> {
+                boolean hasJoin = hasJoinTeamIdSet.contains(team.getId());
+                team.setHasJoin(hasJoin);
+            });
+        } catch (Exception e) {}
         return ResultUtils.success(teamList);
     }
 
@@ -180,14 +198,15 @@ public class TeamController {
     /**
      * 删除（解散）队伍
      *
-     * @param id
+     * @param deleteRequest
      * @return
      */
     @PostMapping("/delete")
-    public BaseResponse<Boolean> deleteTeam(@RequestBody long id, HttpServletRequest request) {
-        if (id <= 0) {
+    public BaseResponse<Boolean> deleteTeam(@RequestBody DeleteRequest deleteRequest, HttpServletRequest request) {
+        if (deleteRequest == null || deleteRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
+        long id = deleteRequest.getId();
         User loginUser = userService.getLoginUser(request);
         boolean result = teamService.deleteTeam(id, loginUser);
         if (!result) {
