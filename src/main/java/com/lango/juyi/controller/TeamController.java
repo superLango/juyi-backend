@@ -121,11 +121,12 @@ public class TeamController {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         boolean isAdmin = userService.isAdmin(request);
-        List<TeamUserVO> teamList = teamService.listTeams(teamQuery, isAdmin);
-        // 判断当前用户是否已加入队伍
+        // 1. 查询队伍列表
+        final List<TeamUserVO> teamList = teamService.listTeams(teamQuery, isAdmin);
+        // 队伍 Id 列表
         List<Long> teamIdList = teamList.stream().map(TeamUserVO::getId).collect(Collectors.toList());
+        // 2. 判断当前用户是否已加入队伍
         QueryWrapper<UserTeam> userTeamQueryWrapper = new QueryWrapper<>();
-
         try {
             User loginUser = userService.getLoginUser(request);
             userTeamQueryWrapper.eq("userId", loginUser.getId());
@@ -138,6 +139,15 @@ public class TeamController {
                 team.setHasJoin(hasJoin);
             });
         } catch (Exception e) {}
+        // 3. 查询已加入队伍的人数
+        QueryWrapper<UserTeam> userTeamJoinWrapper = new QueryWrapper<>();
+        userTeamJoinWrapper.in("teamId",teamIdList);
+        List<UserTeam> userTeamList = userTeamService.list(userTeamJoinWrapper);
+        // 队伍 Id => 加入这个队伍的用户列表
+        Map<Long, List<UserTeam>> teamIdUserTeamList = userTeamList.stream().collect(Collectors.groupingBy(UserTeam::getTeamId));
+        teamList.forEach(team -> {
+            team.setHasJoinNum(teamIdUserTeamList.getOrDefault(team.getId(),new ArrayList<>()).size());
+        });
         return ResultUtils.success(teamList);
     }
 

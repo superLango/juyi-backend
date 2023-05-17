@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.lango</groupId>
-    <artifactId>user-center-backend</artifactId>
+    <artifactId>juyi-backend</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>user-center-backend</name>
-    <description>user-center-backend</description>
+    <name>juyi-backend</name>
+    <description>juyi-backend</description>
     <properties>
         <java.version>1.8</java.version>
     </properties>
