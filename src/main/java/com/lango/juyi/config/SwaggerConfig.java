@@ -26,13 +26,13 @@ public class SwaggerConfig {
     @Bean(value = "defaultApi2")
     public Docket defaultApi2() {
         return new Docket(DocumentationType.SWAGGER_2)
-                .apiInfo(apiInfo())
-                .select() //选择哪些路径和api会生成document
+                。apiInfo(apiInfo())
+                。select() //选择哪些路径和api会生成document
 				// 这里一定要标注你控制器的位置
-                .apis(RequestHandlerSelectors.basePackage("com.lango.juyi.controller"))//controller路径
+                。apis(RequestHandlerSelectors.basePackage("com.lango.juyi.controller"))//controller路径
                 //.apis(RequestHandlerSelectors.any())   //对所有api进行监控
-                .paths(PathSelectors.any())  //对所有路径进行监控
-                .build();
+                。paths(PathSelectors.any())  //对所有路径进行监控
+                。build();
     }
 
     /**
@@ -42,11 +42,11 @@ public class SwaggerConfig {
     //接口文档的一些基本信息
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("lango用户中心")//文档主标题
-                .description("接口文档")//文档描述
-                .termsOfServiceUrl("http://user.lg-sp.cn")
-                .contact(new Contact("lango","https://github.com/superLango","2644992002@qq.com"))
-                .version("1.0")//API的版本
-                .build();
+                。title("lango用户中心")//文档主标题
+                。description("接口文档")//文档描述
+                。termsOfServiceUrl("http://www.**.com")
+                。contact(new Contact("lango","https://github.com/superLango","123456@qq.com"))
+                。version("1.0")//API的版本
+                。build();
     }
 }
