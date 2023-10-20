@@ -16,7 +16,7 @@ spring:
     port: 6379
     host: **.**.**.**
     database: 1
-    password: 245680
+    password: password
 
 
 
