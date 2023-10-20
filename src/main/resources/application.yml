@@ -2,8 +2,8 @@ spring:
   profiles:
     active: dev
   jackson:
-    date-format: yyyy-MM-dd HH:mm:ss
-    time-zone: Asia/Shanghai
+    time-zone: GMT+8
+    date-format: java.text.SimpleDateFormat
   application:
     name: juyi-backend
   datasource:
@@ -12,9 +12,6 @@ spring:
     username: usercenter
     password: 3mDtepZZXRKXHEJj
     # session 失效时间(分钟)
-#    url: jdbc:mysql://localhost:3306/qingwa?useSSL=false
-#    username: qingwa
-#    password: 245680
   session:
     timeout: 86400
     store-type: redis
@@ -47,4 +44,12 @@ mybatis-plus:
       logic-delete-value: 1 # 逻辑已删除值(默认为 1)
       logic-not-delete-value: 0 # 逻辑未删除值(默认为 0)
 
-
+# 不同的服务器，地址不同
+tencent:
+  cos:
+    file:
+      region: ap-beijing
+      secretid: AKIDX1IK9kANK2ZsvFJ8h05ysY7VhgolbIMB
+      secretkey: f6JLApIZpxxmRtFSTFpOmvteFfqnaCf4
+      #bucket可以在控制台创建，也可以使用java代码创建
+      bucketname: user-avatar-1317880157

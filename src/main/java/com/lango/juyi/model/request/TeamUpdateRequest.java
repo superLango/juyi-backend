@@ -1,5 +1,6 @@
 package com.lango.juyi.model.request;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -32,8 +33,14 @@ public class TeamUpdateRequest implements Serializable {
     private String description;
 
     /**
+     * 队伍头像
+     */
+    private String teamAvatarUrl;
+
+    /**
      * 过期时间
      */
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date expireTime;
 
     /**

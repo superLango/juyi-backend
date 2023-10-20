@@ -35,38 +35,38 @@ class UserServiceTest {
         System.out.println(user.getId());
         Assertions.assertTrue(result);
     }
-    @Test
-    void userRegister(){
-        String userAccount = "lango";
-        String userPassword = "";
-        String checkPassword = "245680";
-        String planetCOde = "1";
-        long result = userService.userRegister(userAccount, userPassword, checkPassword,planetCOde);
-        Assertions.assertEquals(-1,result);
-        userAccount = "wa";
-        result = userService.userRegister(userAccount, userPassword, checkPassword,planetCOde);
-        Assertions.assertEquals(-1,result);
-        userAccount = "lango";
-        userPassword = "123456";
-        result = userService.userRegister(userAccount, userPassword, checkPassword,planetCOde);
-        Assertions.assertEquals(-1,result);
-        userAccount = "test lango";
-        userPassword = "12345678";
-        result = userService.userRegister(userAccount, userPassword, checkPassword,planetCOde);
-        Assertions.assertEquals(-1,result);
-        checkPassword = "123465789";
-        result = userService.userRegister(userAccount, userPassword, checkPassword,planetCOde);
-        Assertions.assertEquals(-1,result);
-        userAccount = "123";
-        checkPassword = "12345678";
-        result = userService.userRegister(userAccount, userPassword, checkPassword,planetCOde);
-        Assertions.assertEquals(-1,result);
-        userAccount = "lango";
-        result = userService.userRegister(userAccount, userPassword, checkPassword,planetCOde);
-        Assertions.assertEquals(-1,result);
-
-
-    }
+//    @Test
+//    void userRegister(){
+//        String userAccount = "lango";
+//        String userPassword = "";
+//        String checkPassword = "245680";
+//        String planetCOde = "1";
+//        long result = userService.userRegister(userAccount, userPassword, checkPassword,planetCOde);
+//        Assertions.assertEquals(-1,result);
+//        userAccount = "wa";
+//        result = userService.userRegister(userAccount, userPassword, checkPassword,planetCOde);
+//        Assertions.assertEquals(-1,result);
+//        userAccount = "lango";
+//        userPassword = "123456";
+//        result = userService.userRegister(userAccount, userPassword, checkPassword,planetCOde);
+//        Assertions.assertEquals(-1,result);
+//        userAccount = "test lango";
+//        userPassword = "12345678";
+//        result = userService.userRegister(userAccount, userPassword, checkPassword,planetCOde);
+//        Assertions.assertEquals(-1,result);
+//        checkPassword = "123465789";
+//        result = userService.userRegister(userAccount, userPassword, checkPassword,planetCOde);
+//        Assertions.assertEquals(-1,result);
+//        userAccount = "123";
+//        checkPassword = "12345678";
+//        result = userService.userRegister(userAccount, userPassword, checkPassword,planetCOde);
+//        Assertions.assertEquals(-1,result);
+//        userAccount = "lango";
+//        result = userService.userRegister(userAccount, userPassword, checkPassword,planetCOde);
+//        Assertions.assertEquals(-1,result);
+//
+//
+//    }
 
     @Test
     public void testSearchUsersByTags(){

@@ -1,6 +1,7 @@
 package com.lango.juyi.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.lango.juyi.common.BaseResponse;
 import com.lango.juyi.common.DeleteRequest;
@@ -23,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -31,6 +33,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static net.sf.jsqlparser.util.validation.metadata.NamedObject.user;
 
 /**
  * @author lango
@@ -65,6 +69,9 @@ public class TeamController {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         User loginUser = userService.getLoginUser(request);
+        if (loginUser == null) {
+            throw new BusinessException(ErrorCode.NOT_LOGIN);
+        }
         Team team = new Team();
         BeanUtils.copyProperties(teamAddRequest, team);
         long teamId = teamService.addTeam(team, loginUser);
@@ -92,6 +99,33 @@ public class TeamController {
     }
 
     /**
+     * 队伍头像上传
+     * @param id
+     * @param file
+     * @param request
+     * @return
+     */
+    @PostMapping("/upload")
+    public BaseResponse<String> upload(Long id, MultipartFile file, HttpServletRequest request) {
+        if (file.isEmpty()) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        User loginUser = userService.getLoginUser(request);
+        if (loginUser == null) {
+            throw new BusinessException(ErrorCode.NOT_LOGIN, "请登录");
+        }
+        String avatarUrl = userService.upload(file);
+        TeamUpdateRequest teamUpdateRequest = new TeamUpdateRequest();
+        teamUpdateRequest.setId(id);
+        teamUpdateRequest.setTeamAvatarUrl(avatarUrl);
+        boolean result = teamService.updateTeamAvatar(teamUpdateRequest, loginUser);
+        if (!result) {
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "更新失败");
+        }
+        return ResultUtils.success(avatarUrl);
+    }
+
+    /**
      * 根据 id 查单个数据
      *
      * @param id
@@ -103,6 +137,7 @@ public class TeamController {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         Team team = teamService.getById(id);
+        System.out.println(team);
         if (team == null) {
             throw new BusinessException(ErrorCode.NULL_ERROR);
         }
@@ -129,8 +164,12 @@ public class TeamController {
         QueryWrapper<UserTeam> userTeamQueryWrapper = new QueryWrapper<>();
         try {
             User loginUser = userService.getLoginUser(request);
-            userTeamQueryWrapper.eq("userId", loginUser.getId());
-            userTeamQueryWrapper.in("teamId",teamIdList);
+            if (loginUser.getId() != null && loginUser.getId() > 0){
+                userTeamQueryWrapper.eq("userId", loginUser.getId());
+            }
+            if (CollectionUtils.isNotEmpty(teamIdList)){
+                userTeamQueryWrapper.in("teamId", teamIdList);
+            }
             List<UserTeam> userTeamList = userTeamService.list(userTeamQueryWrapper);
             // 已加入的队伍 Id 集合
             Set<Long> hasJoinTeamIdSet = userTeamList.stream().map(UserTeam::getTeamId).collect(Collectors.toSet());
@@ -138,15 +177,18 @@ public class TeamController {
                 boolean hasJoin = hasJoinTeamIdSet.contains(team.getId());
                 team.setHasJoin(hasJoin);
             });
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
         // 3. 查询已加入队伍的人数
         QueryWrapper<UserTeam> userTeamJoinWrapper = new QueryWrapper<>();
-        userTeamJoinWrapper.in("teamId",teamIdList);
+        if (CollectionUtils.isNotEmpty(teamIdList)){
+            userTeamJoinWrapper.in("teamId", teamIdList);
+        }
         List<UserTeam> userTeamList = userTeamService.list(userTeamJoinWrapper);
         // 队伍 Id => 加入这个队伍的用户列表
         Map<Long, List<UserTeam>> teamIdUserTeamList = userTeamList.stream().collect(Collectors.groupingBy(UserTeam::getTeamId));
         teamList.forEach(team -> {
-            team.setHasJoinNum(teamIdUserTeamList.getOrDefault(team.getId(),new ArrayList<>()).size());
+            team.setHasJoinNum(teamIdUserTeamList.getOrDefault(team.getId(), new ArrayList<>()).size());
         });
         return ResultUtils.success(teamList);
     }
@@ -239,7 +281,30 @@ public class TeamController {
         }
         User loginUser = userService.getLoginUser(request);
         teamQuery.setUserId(loginUser.getId());
-        List<TeamUserVO> teamList = teamService.listTeams(teamQuery, true);
+        QueryWrapper<Team> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("userId",loginUser.getId());
+        List<Team> teams = teamService.list(queryWrapper);
+//        List<TeamUserVO> teamList = teamService.listTeams(teamQuery, true);
+        ArrayList<TeamUserVO> teamList = new ArrayList<>();
+        for (Team team : teams) {
+            TeamUserVO teamUserVO = new TeamUserVO();
+            BeanUtils.copyProperties(team,teamUserVO);
+            teamList.add(teamUserVO);
+        }
+        BeanUtils.copyProperties(teams,teamList);
+        List<Long> teamIdList = teamList.stream().map(TeamUserVO::getId).collect(Collectors.toList());
+
+        // 查询已加入队伍的人数
+        QueryWrapper<UserTeam> userTeamJoinWrapper = new QueryWrapper<>();
+        if (CollectionUtils.isNotEmpty(teamIdList)){
+            userTeamJoinWrapper.in("teamId", teamIdList);
+        }
+        List<UserTeam> userTeamList = userTeamService.list(userTeamJoinWrapper);
+        // 队伍 Id => 加入这个队伍的用户列表
+        Map<Long, List<UserTeam>> teamIdUserTeamList = userTeamList.stream().collect(Collectors.groupingBy(UserTeam::getTeamId));
+        teamList.forEach(team -> {
+            team.setHasJoinNum(teamIdUserTeamList.getOrDefault(team.getId(), new ArrayList<>()).size());
+        });
         return ResultUtils.success(teamList);
     }
 
@@ -259,6 +324,10 @@ public class TeamController {
         QueryWrapper<UserTeam> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("userId", loginUser.getId());
         List<UserTeam> userTeamList = userTeamService.list(queryWrapper);
+        // todo
+        System.out.println(11111);
+        System.out.println(userTeamList);
+        Set<Long> hasJoinTeamIdSet = userTeamList.stream().map(UserTeam::getTeamId).collect(Collectors.toSet());
         // 取出不重复的队伍 Id
         // collect(Collectors.groupingBy(UserTeam::getTeamId)) 用法 =>
         // teamId, userId
@@ -271,7 +340,27 @@ public class TeamController {
         Map<Long, List<UserTeam>> listMap = userTeamList.stream().collect(Collectors.groupingBy(UserTeam::getTeamId));
         List<Long> idList = new ArrayList<>(listMap.keySet());
         teamQuery.setIdList(idList);
-        List<TeamUserVO> teamList = teamService.listTeams(teamQuery, true);
+//        List<TeamUserVO> teamList = teamService.listTeams(teamQuery, true);
+        List<TeamUserVO> teamList = teamService.listMyTeams(teamQuery);
+
+        teamList.forEach(team -> {
+            boolean hasJoin = hasJoinTeamIdSet.contains(team.getId());
+            team.setHasJoin(hasJoin);
+        });
+
+        List<Long> teamIdList = teamList.stream().map(TeamUserVO::getId).collect(Collectors.toList());
+
+        // 查询已加入队伍的人数
+        QueryWrapper<UserTeam> userTeamJoinWrapper = new QueryWrapper<>();
+        if (CollectionUtils.isNotEmpty(teamIdList)){
+            userTeamJoinWrapper.in("teamId", teamIdList);
+        }
+        List<UserTeam> userTeamListNum = userTeamService.list(userTeamJoinWrapper);
+        // 队伍 Id => 加入这个队伍的用户列表
+        Map<Long, List<UserTeam>> teamIdUserTeamList = userTeamListNum.stream().collect(Collectors.groupingBy(UserTeam::getTeamId));
+        teamList.forEach(team -> {
+            team.setHasJoinNum(teamIdUserTeamList.getOrDefault(team.getId(), new ArrayList<>()).size());
+        });
         return ResultUtils.success(teamList);
     }
 }

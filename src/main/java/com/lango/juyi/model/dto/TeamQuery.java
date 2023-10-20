@@ -43,6 +43,10 @@ public class TeamQuery extends PageRequest {
      * 描述
      */
     private String description;
+    /**
+     * 队伍头像
+     */
+    private String teamAvatarUrl;
 
     /**
      * 最大人数

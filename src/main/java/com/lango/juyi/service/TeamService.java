@@ -70,4 +70,8 @@ public interface TeamService extends IService<Team> {
      * @return
      */
     boolean deleteTeam(long id,User loginUser);
+
+    boolean updateTeamAvatar(TeamUpdateRequest teamUpdateRequest, User loginUser);
+
+    List<TeamUserVO> listMyTeams(TeamQuery teamQuery);
 }

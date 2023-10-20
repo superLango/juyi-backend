@@ -1,5 +1,6 @@
 package com.lango.juyi.model.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -29,6 +30,11 @@ public class TeamUserVO implements Serializable {
      * 描述
      */
     private String description;
+
+    /**
+     * 队伍头像
+     */
+    private String teamAvatarUrl;
 
     /**
      * 最大人数

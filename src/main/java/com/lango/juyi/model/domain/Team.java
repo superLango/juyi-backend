@@ -31,6 +31,11 @@ public class Team implements Serializable {
     private String description;
 
     /**
+     * 队伍头像
+     */
+    private String teamAvatarUrl;
+
+    /**
      * 最大人数
      */
     private Integer maxNum;
@@ -39,7 +44,7 @@ public class Team implements Serializable {
      * 过期时间
      * 格式化后端接口
      */
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
+//    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
     private Date expireTime;
 
     /**

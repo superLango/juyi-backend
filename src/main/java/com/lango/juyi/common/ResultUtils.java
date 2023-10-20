@@ -23,7 +23,7 @@ public class ResultUtils {
      * @return
      */
     public static BaseResponse error(ErrorCode errorCode){
-        return new BaseResponse<>(errorCode);
+        return new BaseResponse(errorCode);
     }
 
     /**

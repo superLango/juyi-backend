@@ -1,5 +1,6 @@
 package com.lango.juyi.model.request;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -27,6 +28,11 @@ public class TeamAddRequest implements Serializable {
     private String description;
 
     /**
+     * 队伍头像
+     */
+    private String teamAvatarUrl;
+
+    /**
      * 最大人数
      */
     private Integer maxNum;
@@ -35,7 +41,7 @@ public class TeamAddRequest implements Serializable {
      * 过期时间
      * 格式化后端接口
      */
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date expireTime;
 
     /**

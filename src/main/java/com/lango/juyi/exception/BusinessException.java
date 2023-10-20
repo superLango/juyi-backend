@@ -1,13 +1,16 @@
 package com.lango.juyi.exception;
 
 import com.lango.juyi.common.ErrorCode;
+import io.swagger.annotations.Api;
 
 /**
  * 自定义异常类
  * @author lango
  * @version 1.0
  */
+@Api(tags = "自定义异常类")
 public class BusinessException extends RuntimeException{
+    private static final long serialVersionUID = -4497316946127295216L;
     private final int code;
     private final String description;
 

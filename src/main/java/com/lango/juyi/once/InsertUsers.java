@@ -37,7 +37,6 @@ public class InsertUsers {
             user.setTags("[]");
             user.setUserStatus(0);
             user.setUserRole(0);
-            user.setPlanetCode("1111");
 
 //            userMapper.insert(user);
         }
